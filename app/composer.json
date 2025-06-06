@@ -1,0 +1,19 @@
+
+{
+    "name": "victornagomes/php-api-ordem-servico",
+    "description": "",
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "authors": [],
+    "require": {
+        "php": "^8.0",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src"
+        }
+    }
+  }
+  
