@@ -6,39 +6,43 @@ class Route
 {
     private static array $routes = [];
 
-    public static function get(string $path, string $action)
+    public static function get(string $path, string $action, array $middleware = [])
     {
         self::$routes[] = [
             'path'   => $path,
             'action' => $action,
-            'method' => 'GET'
+            'method' => 'GET',
+            'middleware' => $middleware
         ];
     }
 
-    public static function post(string $path, string $action)
+    public static function post(string $path, string $action, array $middleware = [])
     {
         self::$routes[] = [
             'path'   => $path,
             'action' => $action,
-            'method' => 'POST'
+            'method' => 'POST',
+            'middleware' => $middleware
         ];
     }
 
-    public static function put(string $path, string $action)
+    public static function put(string $path, string $action, array $middleware = [])
     {
         self::$routes[] = [
             'path'   => $path,
             'action' => $action,
-            'method' => 'PUT'
+            'method' => 'PUT',
+            'middleware' => $middleware
         ];
     }
 
-    public static function delete(string $path, string $action)
+    public static function delete(string $path, string $action, array $middleware = [])
     {
         self::$routes[] = [
             'path'   => $path,
             'action' => $action,
-            'method' => 'DELETE'
+            'method' => 'DELETE',
+            'middleware' => $middleware
         ];
     }
 

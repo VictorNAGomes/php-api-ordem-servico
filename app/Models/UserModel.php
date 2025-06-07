@@ -32,6 +32,22 @@ class UserModel extends Database
         }
     }
 
+    public function getCurrentUser()
+    {
+        $token = $this->getBearerToken();
+        
+        if (!$token) {
+            return false;
+        }
+
+        try {
+            $decoded = JWT::decode($token, new Key(JWT_SECRET, 'HS256'));
+            return $this->getByEmail($decoded->email);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     public function generateToken($user)
     {
         $payload = [
@@ -42,5 +58,16 @@ class UserModel extends Database
         ];
 
         return JWT::encode($payload, JWT_SECRET, 'HS256');
+    }
+
+    private function getBearerToken()
+    {
+        $headers = getallheaders();
+        if (isset($headers['Authorization'])) {
+            if (preg_match('/Bearer\s(\S+)/', $headers['Authorization'], $matches)) {
+                return $matches[1];
+            }
+        }
+        return false;
     }
 }

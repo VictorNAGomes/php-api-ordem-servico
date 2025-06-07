@@ -5,16 +5,16 @@ use App\Http\Route;
 // Auth routes
 Route::post('/auth/login', 'AuthController@login');
 
-// Client routes
-Route::get('/clients', 'ClientController@getAll');
-Route::get('/clients/{id}', 'ClientController@getOne');
-Route::post('/clients', 'ClientController@create');
-Route::put('/clients/{id}', 'ClientController@update');
-Route::delete('/clients/{id}', 'ClientController@delete');
+// Client routes (protegidas por autenticação)
+Route::get('/clients', 'ClientController@getAll', ['middleware' => ['auth']]);
+Route::get('/clients/{id}', 'ClientController@getOne', ['middleware' => ['auth']]);
+Route::post('/clients', 'ClientController@create', ['middleware' => ['auth']]);
+Route::put('/clients/{id}', 'ClientController@update', ['middleware' => ['auth']]);
+Route::delete('/clients/{id}', 'ClientController@delete', ['middleware' => ['auth']]);
 
-// Products routes
-Route::get('/products', 'ProductController@getAll');
-Route::get('/products/{id}', 'ProductController@getOne');
-Route::post('/products', 'ProductController@create');
-Route::put('/products/{id}', 'ProductController@update');
-Route::delete('/products/{id}', 'ProductController@delete');
+// Products routes (protegidas por autenticação)
+Route::get('/products', 'ProductController@getAll', ['middleware' => ['auth']]);
+Route::get('/products/{id}', 'ProductController@getOne', ['middleware' => ['auth']]);
+Route::post('/products', 'ProductController@create', ['middleware' => ['auth']]);
+Route::put('/products/{id}', 'ProductController@update', ['middleware' => ['auth']]);
+Route::delete('/products/{id}', 'ProductController@delete', ['middleware' => ['auth']]);
