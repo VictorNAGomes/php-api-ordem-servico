@@ -18,3 +18,10 @@ Route::get('/products/{id}', 'ProductController@getOne', ['middleware' => ['admi
 Route::post('/products', 'ProductController@create', ['middleware' => ['admin']]);
 Route::put('/products/{id}', 'ProductController@update', ['middleware' => ['admin']]);
 Route::delete('/products/{id}', 'ProductController@delete', ['middleware' => ['admin']]);
+
+// Service Orders routes (protegidas por autenticação e role)
+Route::get('/service-orders', 'ServiceOrderController@getAll', ['middleware' => ['admin']]);
+Route::get('/service-orders/{id}', 'ServiceOrderController@getOne', ['middleware' => ['admin']]);
+Route::post('/service-orders', 'ServiceOrderController@create', ['middleware' => ['admin']]);
+Route::put('/service-orders/{id}', 'ServiceOrderController@update', ['middleware' => ['admin']]);
+Route::delete('/service-orders/{id}', 'ServiceOrderController@delete', ['middleware' => ['admin']]);
