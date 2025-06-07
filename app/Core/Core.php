@@ -9,9 +9,9 @@ class Core
 {
     public static function dispatch(array $routes)
     {
-        $url = '/';
+        $url = '';
 
-        isset($_GET['url']) && $url .= $_GET['url'];
+        isset($_SERVER['REQUEST_URI']) && $url .= $_SERVER['REQUEST_URI'];
 
         $url !== '/' && $url = rtrim($url, '/');
 
