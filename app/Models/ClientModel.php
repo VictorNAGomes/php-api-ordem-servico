@@ -6,6 +6,7 @@ use PDO;
 use PDOException;
 
 use App\Models\Database;
+use App\Core\Validator;
 
 class ClientModel extends Database
 {
@@ -60,7 +61,19 @@ class ClientModel extends Database
   public function create($data)
   {
     try {
+      // Valida o CPF
+      if (!Validator::validateCPF($data['cpf'])) {
+        throw new PDOException("Invalid CPF");
+      }
+
       $this->pdo->beginTransaction();
+
+      // Verifica se o CPF já existe
+      $cpfStm = $this->pdo->prepare("SELECT id FROM clients WHERE cpf = ?");
+      $cpfStm->execute([$data['cpf']]);
+      if ($cpfStm->rowCount() > 0) {
+        throw new PDOException("CPF already registered");
+      }
 
       // Inserir na tabela users
       $userStm = $this->pdo->prepare("
@@ -95,13 +108,27 @@ class ClientModel extends Database
 
     } catch (PDOException $e) {
       $this->pdo->rollBack();
-      return false;
+      throw $e;
     }
   }
 
   public function update($id, $data)
   {
     try {
+      // Se estiver atualizando o CPF, valida ele
+      if (isset($data['cpf'])) {
+        if (!Validator::validateCPF($data['cpf'])) {
+          throw new PDOException("Invalid CPF");
+        }
+
+        // Verifica se o CPF já existe em outro registro
+        $cpfStm = $this->pdo->prepare("SELECT id FROM clients WHERE cpf = ? AND id != ?");
+        $cpfStm->execute([$data['cpf'], $id]);
+        if ($cpfStm->rowCount() > 0) {
+          throw new PDOException("CPF already registered");
+        }
+      }
+
       $this->pdo->beginTransaction();
 
       // Buscar o client para obter o user_id
@@ -167,7 +194,7 @@ class ClientModel extends Database
 
     } catch (PDOException $e) {
       $this->pdo->rollBack();
-      return false;
+      throw $e;
     }
   }
 
@@ -191,7 +218,7 @@ class ClientModel extends Database
 
     } catch (PDOException $e) {
       $this->pdo->rollBack();
-      return false;
+      throw $e;
     }
   }
 }

@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\ClientModel;
 use App\Http\Response;
 use App\Http\Request;
+use PDOException;
 
 class ClientController 
 {
@@ -51,7 +52,6 @@ class ClientController
     {
         $data = Request::body();
 
-
         if (!isset($data['name']) || !isset($data['email']) || !isset($data['password']) || 
             !isset($data['cpf']) || !isset($data['address'])) {
             Response::json([
@@ -62,23 +62,32 @@ class ClientController
         }
 
         $clientModel = new ClientModel();
-        $clientId = $clientModel->create($data);
+        try {
+            $clientId = $clientModel->create($data);
+            $client = $clientModel->getById($clientId);
+            
+            Response::json([
+                'error' => false,
+                'message' => 'Client created successfully',
+                'data' => $client
+            ], 201);
+        } catch (PDOException $e) {
+            $message = 'Error creating client';
+            $status = 500;
 
-        if ($clientId === false) {
+            if ($e->getMessage() === 'Invalid CPF') {
+                $message = 'Invalid CPF format';
+                $status = 400;
+            } else if ($e->getMessage() === 'CPF already registered') {
+                $message = 'This CPF is already registered';
+                $status = 400;
+            }
+
             Response::json([
                 'error' => true,
-                'message' => 'Error creating client'
-            ], 500);
-            return;
+                'message' => $message
+            ], $status);
         }
-
-        $client = $clientModel->getById($clientId);
-        
-        Response::json([
-            'error' => false,
-            'message' => 'Client created successfully',
-            'data' => $client
-        ], 201);
     }
 
     public function update($request, $response, $matches)
@@ -88,32 +97,41 @@ class ClientController
 
         $clientModel = new ClientModel();
         
-        // Check if client exists
-        if ($clientModel->getById($id) === false) {
+        try {
+            // Check if client exists
+            if ($clientModel->getById($id) === false) {
+                Response::json([
+                    'error' => true,
+                    'message' => 'Client not found'
+                ], 404);
+                return;
+            }
+
+            $success = $clientModel->update($id, $data);
+            $client = $clientModel->getById($id);
+            
+            Response::json([
+                'error' => false,
+                'message' => 'Client updated successfully',
+                'data' => $client
+            ]);
+        } catch (PDOException $e) {
+            $message = 'Error updating client';
+            $status = 500;
+
+            if ($e->getMessage() === 'Invalid CPF') {
+                $message = 'Invalid CPF format';
+                $status = 400;
+            } else if ($e->getMessage() === 'CPF already registered') {
+                $message = 'This CPF is already registered';
+                $status = 400;
+            }
+
             Response::json([
                 'error' => true,
-                'message' => 'Client not found'
-            ], 404);
-            return;
+                'message' => $message
+            ], $status);
         }
-
-        $success = $clientModel->update($id, $data);
-
-        if ($success === false) {
-            Response::json([
-                'error' => true,
-                'message' => 'Error updating client'
-            ], 500);
-            return;
-        }
-
-        $client = $clientModel->getById($id);
-        
-        Response::json([
-            'error' => false,
-            'message' => 'Client updated successfully',
-            'data' => $client
-        ]);
     }
 
     public function delete($request, $response, $matches)
@@ -121,28 +139,27 @@ class ClientController
         $id = $matches[0];
         $clientModel = new ClientModel();
         
-        // Check if client exists
-        if ($clientModel->getById($id) === false) {
+        try {
+            // Check if client exists
+            if ($clientModel->getById($id) === false) {
+                Response::json([
+                    'error' => true,
+                    'message' => 'Client not found'
+                ], 404);
+                return;
+            }
+
+            $success = $clientModel->delete($id);
+
             Response::json([
-                'error' => true,
-                'message' => 'Client not found'
-            ], 404);
-            return;
-        }
-
-        $success = $clientModel->delete($id);
-
-        if ($success === false) {
+                'error' => false,
+                'message' => 'Client deleted successfully'
+            ]);
+        } catch (PDOException $e) {
             Response::json([
                 'error' => true,
                 'message' => 'Error deleting client'
             ], 500);
-            return;
         }
-
-        Response::json([
-            'error' => false,
-            'message' => 'Client deleted successfully'
-        ]);
     }
 }
