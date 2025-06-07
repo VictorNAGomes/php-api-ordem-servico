@@ -2,6 +2,9 @@
 
 use App\Http\Route;
 
+// Auth routes
+Route::post('/auth/login', 'AuthController@login');
+
 // Client routes
 Route::get('/clients', 'ClientController@getAll');
 Route::get('/clients/{id}', 'ClientController@getOne');

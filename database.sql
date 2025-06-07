@@ -55,7 +55,7 @@ CREATE TABLE service_order_logs (
 );
 
 INSERT INTO users (name, email, password, role) VALUES 
-('Admin', 'admin@example.com', '123', 'admin');
+('Admin', 'admin@example.com', '$2y$10$M.oVUyjb9rBwaRtnXJ7kJuFoUzARwRTBl6Z/FxqeMQw34TpsWkR3e', 'admin');
 
 INSERT INTO status (name) VALUES 
 ('Aberto'),
