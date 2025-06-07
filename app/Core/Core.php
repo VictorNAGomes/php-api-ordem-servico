@@ -18,30 +18,34 @@ class Core
         $prefixController = 'App\\Controllers\\';
 
         $routeFound = false;
-
+        $methodNotAllowed = false;
+        $allowedMethods = [];
+        
         foreach ($routes as $route) {
             $pattern = '#^'. preg_replace('/{id}/', '([\w-]+)', $route['path']) .'$#';
 
             if (preg_match($pattern, $url, $matches)) {
                 array_shift($matches);
-
                 $routeFound = true;
+                $allowedMethods[] = $route['method'];
 
-                if ($route['method'] !== Request::method()) {
-                    Response::json([
-                        'error'   => true,
-                        'success' => false,
-                        'message' => 'Sorry, method not allowed.'
-                    ], 405);
+                if ($route['method'] === Request::method()) {
+                    [$controller, $action] = explode('@', $route['action']);
+                    $controller = $prefixController . $controller;
+                    $extendController = new $controller();
+                    $extendController->$action(new Request, new Response, $matches);
                     return;
                 }
-
-                [$controller, $action] = explode('@', $route['action']);
-
-                $controller = $prefixController . $controller;
-                $extendController = new $controller();
-                $extendController->$action(new Request, new Response, $matches);
             }
+        }
+
+        if ($routeFound) {
+            Response::json([
+                'error'   => true,
+                'success' => false,
+                'message' => 'Method not allowed. Allowed methods: ' . implode(', ', $allowedMethods)
+            ], 405);
+            return;
         }
 
         if (!$routeFound) {
