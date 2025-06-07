@@ -35,7 +35,7 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: secret    
             MYSQL_PASSWORD: secret
-            MYSQL_DATABASE: blog  
+            MYSQL_DATABASE: service_order  
 
 volumes:
     mysqldata:
