@@ -10,7 +10,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE clients (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     cpf VARCHAR(11) NOT NULL UNIQUE,
     address TEXT NOT NULL,
     user_id INT NOT NULL,

@@ -4,10 +4,10 @@ use App\Http\Route;
 
 // Client routes
 Route::get('/clients', 'ClientController@getAll');
-// Route::get('/clients/{id}', 'ClientController@show');
-// Route::post('/clients', 'ClientController@store');
-// Route::put('/clients/{id}', 'ClientController@update');
-// Route::delete('/clients/{id}', 'ClientController@delete');
+Route::get('/clients/{id}', 'ClientController@getOne');
+Route::post('/clients', 'ClientController@create');
+Route::put('/clients/{id}', 'ClientController@update');
+Route::delete('/clients/{id}', 'ClientController@delete');
 
 // Products routes
 Route::get('/products', 'ProductController@getAll');
